@@ -2,7 +2,12 @@ import { mclFR, solG1 } from "../src/mcl";
 import { Wallet, ethers } from "ethers";
 import * as mcl from '../src/mcl';
 import { terminalFooter, terminalHeader } from "./utils";
+import fs from 'fs';
+import path from "path";
 
+const OUT_DIR = '.othentic';
+const JSON_FORMAT = 'avs-register-as-operator';
+const JSON_FILE = `${JSON_FORMAT}.json`;
 //
 // example:
 // ts-node scripts/genAvsRegisterBlsSignature.ts 0x1aa4829bdf0461d6fc1d9cfb0de78eec4b142fc722112fd0369c407d03ad3adb 0x8B8136fB6A8ea7AbA61d88da5753D8fEa2d7d5b2 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd https://holesky.gateway.tenderly.co
@@ -32,11 +37,23 @@ async function main() {
     const pubkey = secretToPubkey(secret);
 
     console.log(
-        `pubkey: \n${mcl.g1ToHex(pubkey)}`
+        `blsKey: \n${mcl.g1ToHex(pubkey)}`
     );
-    const blsSignature = await generateBlsAuthSignature(secret, chainId, SMART_WALLET_ADDRESS, AVS_GOVERNANCE_ADDRESS);
+    const blsRegistrationSignature = await generateBlsAuthSignature(secret, chainId, SMART_WALLET_ADDRESS, AVS_GOVERNANCE_ADDRESS);
     console.log(
-        `\nsignature: \n${blsSignature[0] + (blsSignature[1] as string).substring(2)}`
+        `\nblsRegistrationSignature: \n${blsRegistrationSignature[0] + (blsRegistrationSignature[1] as string).substring(2)}`
+    );
+
+    const outJson = { format: JSON_FILE, version: '1.0.0', operator: SMART_WALLET_ADDRESS, avs: AVS_GOVERNANCE_ADDRESS, blsKey: mcl.g2ToHex(pubkey), blsRegistrationSignature };
+    if (!fs.existsSync(OUT_DIR)) {
+        fs.mkdirSync(OUT_DIR);
+    }
+    const outJsonPath = path.join(OUT_DIR, JSON_FILE);
+    const outJsonAsString = JSON.stringify(outJson, null, 2);
+    fs.writeFileSync(outJsonPath, outJsonAsString);
+    console.log(`\n\n${outJsonAsString}`);
+    console.log(
+        `\n\njson file stored: \n${path.join(process.cwd(), outJsonPath)}`
     );
     terminalFooter();
 }
