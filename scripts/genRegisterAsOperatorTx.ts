@@ -2,13 +2,15 @@ import { Wallet, ethers } from "ethers";
 import { avsGovernanceSmartContractAbi } from "../src/avsGovernanceAbi";
 import { terminalFooter, terminalHeader } from "./utils";
 import fs from 'fs';
+import delegationManagerConfig from '../data/delegationManagerConfig.json';
 
-const AVS_DIRECTORY = '0x055733000064333CaDDbC92763c58BF0192fFeBf';
 
+const SHOW_SIMULATE_FORGE_SCRIPT = false;
+// ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd XXX https://holesky.gateway.tenderly.co
 async function main() {
     terminalHeader();
     if (process.argv.length < 7) {
-        console.log(`ts-node scripts/${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <AUTH_TOKEN> <RPC>`);
+        console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <AUTH_TOKEN> <RPC>`);
         terminalFooter();
         process.exit(0);
     }
@@ -22,12 +24,17 @@ async function main() {
     const registerAsOperatorData = JSON.parse(fs.readFileSync(JSON_FILE, 'utf8'));
     const { chainId: chainIdStr, operator, avs, blsKey, blsRegistrationSignature } = registerAsOperatorData;
     const chainId = BigInt(chainIdStr);
-
     console.log('Generating register as allowed operator transaction\n\n\n');
     console.log(`operator: ${operator}`);
     console.log(`AVS: ${avs}`);
     console.log(`chainId: ${chainId}`);
-
+    const avsDirectory = chainIdToDelegationManagerAddress(chainIdStr);
+    if (!avsDirectory) {
+        console.log(`ChainId ${chainId} not supported`);
+        terminalFooter();
+        process.exit(0);
+    }
+    console.log(`AVS Directory: ${avsDirectory}`);
     const { signature, salt, expiry } = await generateOperatorSignature(wallet, operator, avs);
     console.log(`\n\n`);
     console.log(`eigenDigestSignature:\n`);
@@ -37,50 +44,55 @@ async function main() {
     console.log(`\n\n`);
 
     const avsGovernance = new ethers.Contract(
-        AVS_DIRECTORY,
+        avsDirectory,
         avsGovernanceSmartContractAbi,
         wallet, 
         );
-    const tx = await avsGovernance.registerAsOperator.populateTransaction(blsKey, RECEIVER_ADDRESS, { signature, salt, expiry }, { signature: blsRegistrationSignature });
+
+    const tx = AUTH_TOKEN
+        ? await avsGovernance.registerAsOperator.populateTransaction(blsKey, RECEIVER_ADDRESS, { signature, salt, expiry }, { signature: blsRegistrationSignature })
+        : await avsGovernance.registerAsAllowedOperator.populateTransaction(blsKey, AUTH_TOKEN, RECEIVER_ADDRESS, { signature, salt, expiry }, { signature: blsRegistrationSignature });
     console.log(`Register on AVS tx to be sent:\n`);
     console.log(`\tto: ${tx.to}`);
     console.log(`\tdata: ${tx.data}`);
-    console.log(`\n\n\n\n\n`);
-    console.log(`Simulate:\n`);
-    console.log(`forge script GetCallDataTrace --sig="run(string,address,address,bytes)" ${RPC} ${operator} ${tx.to} ${tx.data} -vvvv`);
-    console.log(`\n*for submit use --private-key <SMART_WALLET_MANAGER_ECDSA_KEY> --brodcast`)
-    console.log(`\n\n`);
-
+    console.log(`\n\n\n`);
+    if (SHOW_SIMULATE_FORGE_SCRIPT) {
+        console.log(`Simulate:\n`);
+        console.log(`forge script GetCallDataTrace --sig="run(string,address,address,bytes)" ${RPC} ${operator} ${tx.to} ${tx.data} -vvvv`);
+        console.log(`\n*for submit use --private-key <SMART_WALLET_MANAGER_ECDSA_KEY> --brodcast`)
+        console.log(`\n\n`);
+    }
     terminalFooter();
+
+    function chainIdToDelegationManagerAddress(chainId: string): string {
+        return chainId in delegationManagerConfig && delegationManagerConfig[chainId];
+    }
+
+    async function generateOperatorSignature(validator: Wallet, operatorAddress: string, avsGovernanceAddress: string): Promise<{ signature: string, salt: string, expiry: BigInt }> {
+        const { digestHashArray, salt } = await calculateOperatorAVSRegistrationDigestHash(avsGovernanceAddress, validator, operatorAddress);
+        const signature = validator.signingKey.sign(digestHashArray);
+        const packedSig = ethers.solidityPacked(["bytes", "bytes", "uint8"], [signature.r, signature.s, signature.v]);
+        //TODO: fetch this value from operator in the command (set default as max uint) 
+        const expiry = ethers.MaxUint256;
+        return { signature: packedSig, salt, expiry };
+    }
+
+    async function calculateOperatorAVSRegistrationDigestHash(network: string, wallet: Wallet, operatorAddress: string): Promise<{ digestHashArray: Uint8Array, salt: string }> {
+        const eigenManager = new ethers.Contract(
+        avsDirectory,
+        ['function calculateOperatorAVSRegistrationDigestHash(address operator,address avs,bytes32 salt,uint256 expiry) external view returns (bytes32)'],
+        wallet, 
+        );
+
+        const salt = ethers.encodeBytes32String(Math.random().toString());
+
+        try {
+            const digestHashArray = await eigenManager.calculateOperatorAVSRegistrationDigestHash(operatorAddress, network, salt, ethers.MaxUint256);
+        return { digestHashArray , salt };
+        } catch (e) {
+            this.othenticSmartContracts.handleOthenticSmartContractErrors(e, false);
+        }
+    }
 }
 
 main().catch(console.error);
-
-
-
-async function generateOperatorSignature(validator: Wallet, operatorAddress: string, avsGovernanceAddress: string): Promise<{ signature: string, salt: string, expiry: BigInt }> {
-    const { digestHashArray, salt } = await calculateOperatorAVSRegistrationDigestHash(avsGovernanceAddress, validator, operatorAddress);
-    const signature = validator.signingKey.sign(digestHashArray);
-    const packedSig = ethers.solidityPacked(["bytes", "bytes", "uint8"], [signature.r, signature.s, signature.v]);
-    //TODO: fetch this value from operator in the command (set default as max uint) 
-    const expiry = ethers.MaxUint256;
-    return { signature: packedSig, salt, expiry };
-}
-
-async function calculateOperatorAVSRegistrationDigestHash(network: string, wallet: Wallet, operatorAddress: string): Promise<{ digestHashArray: Uint8Array, salt: string }> {
-    const eigenManager = new ethers.Contract(
-      AVS_DIRECTORY,
-      ['function calculateOperatorAVSRegistrationDigestHash(address operator,address avs,bytes32 salt,uint256 expiry) external view returns (bytes32)'],
-      wallet, 
-    );
-
-    const salt = ethers.encodeBytes32String(Math.random().toString());
-
-    try {
-      const digestHashArray = await eigenManager.calculateOperatorAVSRegistrationDigestHash(operatorAddress, network, salt, ethers.MaxUint256);
-      return { digestHashArray , salt };
-    } catch (e) {
-      this.othenticSmartContracts.handleOthenticSmartContractErrors(e, false);
-    }
-  }
-
