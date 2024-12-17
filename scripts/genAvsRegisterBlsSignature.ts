@@ -44,7 +44,7 @@ async function main() {
         `\nblsRegistrationSignature: \n${blsRegistrationSignature[0] + (blsRegistrationSignature[1] as string).substring(2)}`
     );
 
-    const outJson = { format: JSON_FORMAT, version: '1.0.0', operator: SMART_WALLET_ADDRESS, avs: AVS_GOVERNANCE_ADDRESS, blsKey: mcl.g2ToHex(pubkey), blsRegistrationSignature };
+    const outJson = { format: JSON_FORMAT, version: '1.0.0', operator: SMART_WALLET_ADDRESS, chainId: ethers.formatUnits(chainId, 0), avs: AVS_GOVERNANCE_ADDRESS, blsKey: mcl.g2ToHex(pubkey), blsRegistrationSignature };
     if (!fs.existsSync(OUT_DIR)) {
         fs.mkdirSync(OUT_DIR);
     }

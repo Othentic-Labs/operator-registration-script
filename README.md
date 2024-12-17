@@ -64,6 +64,7 @@ outputs:
   "format": "avs-register-as-operator",
   "version": "1.0.0",
   "operator": "0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd",
+  "chainId": "17000",
   "avs": "0x8B8136fB6A8ea7AbA61d88da5753D8fEa2d7d5b2",
   "blsKey": [
     "0x18369b7c44716557c6bc5fa4ce665554c640114beb1d448236f7cf8a31f57349",
