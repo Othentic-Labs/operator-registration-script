@@ -39,10 +39,41 @@ chain: 17000
 
 
 
-pubkey:
+blsKey: 
 0x12f0b147ce5f9bbc855767b4b9806b9e905e939d5853b39b9ea42b74896667e818369b7c44716557c6bc5fa4ce665554c640114beb1d448236f7cf8a31f57349,0x30371e56c2af8022ad4f3475095aefdc15d27b7f50243a6d9d09790cf40660c91b481b478fa69a7ab0ff9bdfcbb568eae8a9b6cd1009b04f68e85edaf1c31eea
 
-signature:
-0x0867bb9a2b7e9672b259d13ccd661f69c477001044112473866762696396652604af0ce283a62fa42a01fde49f52c915729c84f8f67b5548bd194414466e1bfb
+blsRegistrationSignature: 
+0x2fc6410f5bd9f05dbe20ebea167ee00632fb7b973cad837492f3e0ccbc34df80040455a71e8e013cfb7001cc9f69dbee26d5daaf824994904361d5aa5242374f
 
+
+json file stored: 
+/Users/dev/projects/.othentic/avs-register-as-operator.json
+
+```
+
+Once done a formatted json file with the results will be ready to be shared:
+
+```
+cat .othentic/avs-register-as-operator.json
+```
+
+outputs:
+
+```
+{
+  "format": "avs-register-as-operator.json",
+  "version": "1.0.0",
+  "operator": "0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd",
+  "avs": "0x8B8136fB6A8ea7AbA61d88da5753D8fEa2d7d5b2",
+  "blsKey": [
+    "0x18369b7c44716557c6bc5fa4ce665554c640114beb1d448236f7cf8a31f57349",
+    "0x12f0b147ce5f9bbc855767b4b9806b9e905e939d5853b39b9ea42b74896667e8",
+    "0x1b481b478fa69a7ab0ff9bdfcbb568eae8a9b6cd1009b04f68e85edaf1c31eea",
+    "0x30371e56c2af8022ad4f3475095aefdc15d27b7f50243a6d9d09790cf40660c9"
+  ],
+  "blsRegistrationSignature": [
+    "0x2fc6410f5bd9f05dbe20ebea167ee00632fb7b973cad837492f3e0ccbc34df80",
+    "0x040455a71e8e013cfb7001cc9f69dbee26d5daaf824994904361d5aa5242374f"
+  ]
+}
 ```

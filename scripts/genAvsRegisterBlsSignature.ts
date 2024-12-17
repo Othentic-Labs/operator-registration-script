@@ -51,7 +51,7 @@ async function main() {
     const outJsonPath = path.join(OUT_DIR, JSON_FILE);
     const outJsonAsString = JSON.stringify(outJson, null, 2);
     fs.writeFileSync(outJsonPath, outJsonAsString);
-    console.log(`\n\n${outJsonAsString}`);
+    // console.log(`\n\n${outJsonAsString}`);
     console.log(
         `\n\njson file stored: \n${path.join(process.cwd(), outJsonPath)}`
     );
