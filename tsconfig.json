@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
+    "paths": {
+      "@othentic-cli/*": [
+        "apps/othentic-cli/src/*"
+      ],
+      "@app/dal": [
+        "libs/dal"
+      ],
+      "@app/dal/*": [
+        "libs/dal/*"
+      ],
+      "@app/smartContracts/*": [
+        "libs/smartContracts/*"
+      ],
+      "@app/smartContracts": [
+        "libs/smartContracts/"
+      ],
+      "@app/types": [
+        "libs/types/src"
+      ],
+      "@app/types/*": [
+        "libs/types/src/*"
+      ],
+      "@app/mcl": [
+        "libs/mcl/src"
+      ],
+      "@app/mcl/*": [
+        "libs/mcl/src/*"
+      ],
+      "@app/p2p-framework": [
+        "libs/p2p-framework/src"
+      ],
+      "@app/p2p-framework/*": [
+        "libs/p2p-framework/src/*"
+      ]
+    }
+  }
+}
