@@ -61,7 +61,7 @@ outputs:
 
 ```
 {
-  "format": "avs-register-as-operator.json",
+  "format": "avs-register-as-operator",
   "version": "1.0.0",
   "operator": "0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd",
   "avs": "0x8B8136fB6A8ea7AbA61d88da5753D8fEa2d7d5b2",
