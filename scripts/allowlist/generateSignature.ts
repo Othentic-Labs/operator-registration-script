@@ -19,7 +19,7 @@ async function main() {
 const [,, OWNER_PRIVATE_KEY, WALLET, AVS_GOVERNANCE] = process.argv;
 
   const signer = new ethers.Wallet(OWNER_PRIVATE_KEY);
-  console.log('Signer address:', signer.address);
+  console.log('Owner address:', signer.address);
   console.log('Smart wallet address:', WALLET)
   console.log('Avs address:', AVS_GOVERNANCE)
 
