@@ -12,6 +12,17 @@ npm i
 
 ## Scripts
 
+Scripts list:
+
+- Generate Avs Bls Public Key & Auth Signature
+
+- Generate Register as [Allowed] Operator
+
+- Validate The Signature for Allowlist Service
+
+- Generate Signature for Allowlist Service
+
+
 ### Generate Avs Bls Public Key & Auth Signature
 
 This script generates auth signature for registering `<SMART_WALLET_ADDRESS>` as operator's address in AVS with the address `<AVS_GOVERNANCE_ADDRESS>`, using the private BLS key `<BLS_PRIVATE_KEY>`
