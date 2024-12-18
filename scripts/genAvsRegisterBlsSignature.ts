@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from "path";
 
 const OUT_DIR = '.othentic';
-const JSON_FORMAT = 'avs-register-as-operator';
+const JSON_FORMAT = 'othentic-avs-register-as-operator';
 const JSON_FILE = `${JSON_FORMAT}.json`;
 //
 // example:
