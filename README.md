@@ -199,3 +199,38 @@ outputs:
   "isSmartWallet": true
 }
 ```
+
+
+### Validate The Signature for Allowlist Service
+
+This script gets the json resulted from the previous script `<JSON_FILE>` and use it together with `<RPC>` to resolve if the signature is validated by the Smart Contract or not.
+
+
+```
+ts-node scripts/allowlist/validateSignature.ts <JSON_FILE> <RPC>
+```
+
+for example:
+
+```
+ts-node scripts/allowlist/validateSignature.ts .othentic/othentic-allowlist-request-signature.json https://holesky.gateway.tenderly.co
+```
+
+outputs:
+```
+
+Smart Wallet Signature Validation...
+
+
+from json file: .othentic/othentic-allowlist-request-signature.json
+
+Smart wallet address: 0x7F2a575015946D06284E130b00944c5755c351f2
+AvsGovernance address: 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd
+Signature: 0xb2477291c0cf813862954a5d1d9e628bf3b4f1da97a4dc71a604a7abf9ec92091ec9f99d15a937d9e2a469f9ab7107565c78becd9058e5cb8a04aac4674c1d4f1c
+
+
+is valid: 
+true
+
+
+```
