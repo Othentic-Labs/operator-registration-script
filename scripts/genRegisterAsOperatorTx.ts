@@ -72,7 +72,6 @@ async function main() {
         const { digestHashArray, salt } = await calculateOperatorAVSRegistrationDigestHash(avsGovernanceAddress, validator, operatorAddress);
         const signature = validator.signingKey.sign(digestHashArray);
         const packedSig = ethers.solidityPacked(["bytes", "bytes", "uint8"], [signature.r, signature.s, signature.v]);
-        //TODO: fetch this value from operator in the command (set default as max uint) 
         const expiry = ethers.MaxUint256;
         return { signature: packedSig, salt, expiry };
     }
