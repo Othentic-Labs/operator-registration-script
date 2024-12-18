@@ -175,7 +175,7 @@ ts-node scripts/allowlist/generateSignature.ts 6212d241a920a6d5d9841af933411d8d6
 outputs:
 ```
 
-Signer address: 0x271C1667aE932E08D77e8B339568022f20a77Cc0
+Owner address: 0x271C1667aE932E08D77e8B339568022f20a77Cc0
 Smart wallet address: 0x7F2a575015946D06284E130b00944c5755c351f2
 Avs address: 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd
 
