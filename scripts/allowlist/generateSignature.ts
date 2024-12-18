@@ -12,13 +12,13 @@ async function main() {
 
   if (process.argv.length < 5) {
     console.log(`missing arguments. run:\n`)
-    console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <SIGNER_PRIVATE_KEY> <WALLET> <AVS_GOVERNANCE>`);
+    console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <OWNER_PRIVATE_KEY> <WALLET> <AVS_GOVERNANCE>`);
     terminalFooter();
     process.exit(0);
 }
-const [,, SIGNER_PRIVATE_KEY, WALLET, AVS_GOVERNANCE] = process.argv;
+const [,, OWNER_PRIVATE_KEY, WALLET, AVS_GOVERNANCE] = process.argv;
 
-  const signer = new ethers.Wallet(SIGNER_PRIVATE_KEY);
+  const signer = new ethers.Wallet(OWNER_PRIVATE_KEY);
   console.log('Signer address:', signer.address);
   console.log('Smart wallet address:', WALLET)
   console.log('Avs address:', AVS_GOVERNANCE)

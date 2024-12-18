@@ -160,10 +160,10 @@ outputs:
 
 ### Generate Signature for Allowlist Service
 
-This script generates auth signature for the auth token that is generated in allowlist service. `<SIGNER_PRIVATE_KEY>` is the Smart Wallet singing EOA key, `<WALLET>` is the Smart Contract address and  `<AVS_GOVERNANCE_ADDRESS>` is the AvsGovernance address
+This script generates auth signature for the auth token that is generated in allowlist service. `<OWNER_PRIVATE_KEY>` is the Smart Wallet singing EOA key, `<WALLET>` is the Smart Contract address and  `<AVS_GOVERNANCE_ADDRESS>` is the AvsGovernance address
 
 ```
-ts-node scripts/allowlist/generateSignature.ts <SIGNER_PRIVATE_KEY> <WALLET> <AVS_GOVERNANCE>
+ts-node scripts/allowlist/generateSignature.ts <OWNER_PRIVATE_KEY> <WALLET> <AVS_GOVERNANCE>
 ```
 
 for example:
