@@ -58,21 +58,21 @@ blsRegistrationSignature:
 
 
 json file stored:
-/Users/dev/projects/.othentic/avs-register-as-operator.json
+/Users/dev/projects/.othentic/othentic-avs-register-as-operator.json
 
 ```
 
 Once done a formatted json file with the results will be ready to be shared:
 
 ```
-cat .othentic/avs-register-as-operator.json
+cat .othentic/othentic-avs-register-as-operator.json
 ```
 
 outputs:
 
 ```
 {
-  "format": "avs-register-as-operator",
+  "format": "othentic-avs-register-as-operator",
   "version": "1.0.0",
   "operator": "0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd",
   "chainId": "17000",
@@ -103,7 +103,7 @@ ts-node scripts/genRegisterAsOperatorTx.ts <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECE
 for example:
 
 ```
-ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd XXX https://holesky.gateway.tenderly.co
+ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/othentic-avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd XXX https://holesky.gateway.tenderly.co
 ```
 
 outputs:
