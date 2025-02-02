@@ -52,9 +52,17 @@ async function main() {
         wallet, 
         );
 
-    const tx = AUTH_TOKEN
-        ? await avsGovernance.registerAsOperator.populateTransaction(blsKey, RECEIVER_ADDRESS, { signature, salt, expiry }, { signature: blsRegistrationSignature })
-        : await avsGovernance.registerAsAllowedOperator.populateTransaction(blsKey, AUTH_TOKEN, RECEIVER_ADDRESS, { signature, salt, expiry }, { signature: blsRegistrationSignature });
+        const tx = AUTH_TOKEN
+        ? await avsGovernance.registerAsAllowedOperator.populateTransaction(
+            blsKey, AUTH_TOKEN, RECEIVER_ADDRESS, 
+            { signature, salt, expiry }, 
+            { signature: blsRegistrationSignature }
+          ) 
+        : await avsGovernance.registerAsOperator.populateTransaction(
+            blsKey, RECEIVER_ADDRESS, 
+            { signature, salt, expiry }, 
+            { signature: blsRegistrationSignature }
+          );
     console.log(`Register on AVS tx to be sent:\n`);
     console.log(`\tto: ${tx.to}`);
     console.log(`\tdata: ${tx.data}`);
