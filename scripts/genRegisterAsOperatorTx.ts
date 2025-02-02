@@ -47,7 +47,7 @@ async function main() {
     console.log(`\n\n`);
 
     const avsGovernance = new ethers.Contract(
-        avsDirectory,
+        avs,
         avsGovernanceSmartContractAbi,
         wallet, 
         );
