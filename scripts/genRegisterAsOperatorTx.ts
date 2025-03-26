@@ -9,15 +9,15 @@ const OUT_DIR = '.othentic';
 const JSON_FORMAT = 'othentic-evm-transaction-data';
 const JSON_OUT_FILE = `${JSON_FORMAT}.json`;
 const SHOW_SIMULATE_FORGE_SCRIPT = false;
-// ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd XXX https://holesky.gateway.tenderly.co
+// ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/othentic-avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd https://holesky.gateway.tenderly.co XXX
 async function main() {
     terminalHeader();
     if (process.argv.length < 7) {
-        console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <AUTH_TOKEN> <RPC>`);
+        console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <RPC> <AUTH_TOKEN>`);
         terminalFooter();
         process.exit(0);
     }
-    const [,, ECDSA_PRIVATE_KEY, JSON_FILE, RECEIVER_ADDRESS, AUTH_TOKEN, RPC] = process.argv;
+    const [,, ECDSA_PRIVATE_KEY, JSON_FILE, RECEIVER_ADDRESS, RPC, AUTH_TOKEN] = process.argv;
     if (!fs.existsSync(JSON_FILE)) {
         console.log(`json file not found: ${JSON_FILE}`);
         terminalFooter();
@@ -51,17 +51,12 @@ async function main() {
         avsGovernanceSmartContractAbi,
         wallet, 
         );
-
-        const tx = AUTH_TOKEN
-        ? await avsGovernance.registerAsAllowedOperator.populateTransaction(
-            blsKey, AUTH_TOKEN, RECEIVER_ADDRESS, 
-            { signature, salt, expiry }, 
-            { signature: blsRegistrationSignature }
-          ) 
-        : await avsGovernance.registerAsOperator.populateTransaction(
-            blsKey, RECEIVER_ADDRESS, 
-            { signature, salt, expiry }, 
-            { signature: blsRegistrationSignature }
+        const tx = await avsGovernance.registerAsOperator.populateTransaction({
+            blsKey, 
+            rewardsReceiver: RECEIVER_ADDRESS, 
+            blsRegistrationSignature: {signature: blsRegistrationSignature}, 
+            authToken: AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash,
+          }
           );
     console.log(`Register on AVS tx to be sent:\n`);
     console.log(`\tto: ${tx.to}`);
