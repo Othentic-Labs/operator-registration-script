@@ -2,10 +2,10 @@
 
 
 ### Prerequisites
-- Node 22.6 (preferably via NVM)
-- OpenSSL
-
-```
+- Node 22.6 (preferably via NVM).
+- OpenSSL.
+- [OPTIONAL] allow list auth token.
+```bash
 npm i
 ```
 
@@ -27,18 +27,18 @@ Scripts list:
 
 This script generates auth signature for registering `<SMART_WALLET_ADDRESS>` as operator's address in AVS with the address `<AVS_GOVERNANCE_ADDRESS>`, using the private BLS key `<BLS_PRIVATE_KEY>`
 
-```
+```bash
 ts-node scripts/genAvsRegisterBlsSignature.ts <BLS_PRIVATE_KEY> <AVS_GOVERNANCE_ADDRESS> <SMART_WALLET_ADDRESS> <RPC>
 ```
 
 for example:
 
-```
+```bash
 ts-node scripts/genAvsRegisterBlsSignature.ts 0x1aa4829bdf0461d6fc1d9cfb0de78eec4b142fc722112fd0369c407d03ad3adb 0x8B8136fB6A8ea7AbA61d88da5753D8fEa2d7d5b2 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd https://holesky.gateway.tenderly.co
 ```
 
 outputs:
-```
+```bash
 
 Generating signature for operator registration...
 
@@ -64,13 +64,13 @@ json file stored:
 
 Once done a formatted json file with the results will be ready to be shared:
 
-```
+```bash
 cat .othentic/othentic-avs-register-as-operator.json
 ```
 
 outputs:
 
-```
+```json
 {
   "format": "othentic-avs-register-as-operator",
   "version": "1.0.0",
@@ -96,18 +96,18 @@ outputs:
 This script gets the json resulted from the previous script `<JSON_FILE>` and use it together with `<ECDSA_PRIVATE_KEY>`, `<RECEIVER_ADDRESS>`, optional `<AUTH_TOKEN>` and `<RPC>`
 
 
-```
+```bash
 ts-node scripts/genRegisterAsOperatorTx.ts <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <AUTH_TOKEN> <RPC>
 ```
 
 for example:
 
-```
+```bash
 ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/othentic-avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd XXX https://holesky.gateway.tenderly.co
 ```
 
 outputs:
-```
+```bash
 
 Generating register as allowed operator transaction
 
@@ -143,13 +143,13 @@ json file stored:
 ```
 Once done a formatted json file with the desired evm transaction data will be stored
 
-```
+```bash
 cat .othentic/othentic-evm-transaction-data.json
 ```
 
 outputs:
 
-```
+```json
 {
   "format": "othentic-evm-transaction-data",
   "version": "1.0.0",
@@ -162,18 +162,18 @@ outputs:
 
 This script generates auth signature for the auth token that is generated in allowlist service. `<SIGNER_PRIVATE_KEY>` is the Smart Wallet singing EOA key, `<WALLET>` is the Smart Contract address and  `<AVS_GOVERNANCE_ADDRESS>` is the AvsGovernance address
 
-```
+```bash
 ts-node scripts/allowlist/generateSignature.ts <SIGNER_PRIVATE_KEY> <WALLET> <AVS_GOVERNANCE>
 ```
 
 for example:
 
-```
+```bash
 ts-node scripts/allowlist/generateSignature.ts 6212d241a920a6d5d9841af933411d8d6141638c8f7d21a6b32594014ef0006e 0x7F2a575015946D06284E130b00944c5755c351f2 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd
 ```
 
 outputs:
-```
+```bash
 
 Signer address: 0x271C1667aE932E08D77e8B339568022f20a77Cc0
 Smart wallet address: 0x7F2a575015946D06284E130b00944c5755c351f2
@@ -194,13 +194,13 @@ json file stored:
 
 Once done a formatted json file with the results can be use as `POST` body for allowlist service
 
-```
+```bash
 cat .othentic/othentic-allowlist-request-signature.json
 ```
 
 outputs:
 
-```
+```json
 {
   "format": "othentic-allowlist-request-signature",
   "version": "1.0.0",
@@ -211,6 +211,21 @@ outputs:
 }
 ```
 
+POST request example:
+```bash
+curl --location 'http://allowlist-signer.othentic.xyz/signer/sign' \
+--header 'Content-Type: application/json' \
+--data '{
+  "wallet": "0xe1f9566******78Fd",
+  "avsGovernanceAddress": "0x6f943318b05AD7c6EE596A220510A6D64B518dd8",
+  "signature": "0xdf5b494e7b526be8ef62******1c0d6308c67a4efd1b",
+  "isSmartWallet": true
+}'
+```
+Expected returned data:
+```json
+{"data":{"token":"0x158b0a2cfe045dc******770767536ace24711b"},"error":false,"message":null}
+```
 
 ### Validate The Signature for Allowlist Service
 
