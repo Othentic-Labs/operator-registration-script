@@ -19,117 +19,46 @@ export const avsGovernanceSmartContractAbi = [
        "stateMutability":"view"
     },
     {
-       "type":"function",
-       "name":"registerAsAllowedOperator",
-       "inputs":[
-          {
-             "name":"_blsKey",
-             "type":"uint256[4]",
-             "internalType":"uint256[4]"
-          },
-          {
-             "name":"_authToken",
-             "type":"bytes",
-             "internalType":"bytes"
-          },
-          {
-             "name":"_rewardsReceiver",
-             "type":"address",
-             "internalType":"address"
-          },
-          {
-             "name":"_operatorSignature",
-             "type":"tuple",
-             "internalType":"struct ISignatureUtils.SignatureWithSaltAndExpiry",
-             "components":[
+      "type": "function",
+      "name": "registerAsOperator",
+      "inputs": [
+        {
+          "name": "_operatorRegistrationParams",
+          "type": "tuple",
+          "internalType": "struct IAvsGovernance.OperatorRegistrationParams",
+          "components": [
+            {
+              "name": "blsKey",
+              "type": "uint256[4]",
+              "internalType": "uint256[4]"
+            },
+            {
+              "name": "rewardsReceiver",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "blsRegistrationSignature",
+              "type": "tuple",
+              "internalType": "struct BLSAuthLibrary.Signature",
+              "components": [
                 {
-                   "name":"signature",
-                   "type":"bytes",
-                   "internalType":"bytes"
-                },
-                {
-                   "name":"salt",
-                   "type":"bytes32",
-                   "internalType":"bytes32"
-                },
-                {
-                   "name":"expiry",
-                   "type":"uint256",
-                   "internalType":"uint256"
+                  "name": "signature",
+                  "type": "uint256[2]",
+                  "internalType": "uint256[2]"
                 }
-             ]
-          },
-          {
-             "name":"_blsRegistrationSignature",
-             "type":"tuple",
-             "internalType":"struct BLSAuthLibrary.Signature",
-             "components":[
-                {
-                   "name":"signature",
-                   "type":"uint256[2]",
-                   "internalType":"uint256[2]"
-                }
-             ]
-          }
-       ],
-       "outputs":[
-          
-       ],
-       "stateMutability":"nonpayable"
-    },
-    {
-       "type":"function",
-       "name":"registerAsOperator",
-       "inputs":[
-          {
-             "name":"_blsKey",
-             "type":"uint256[4]",
-             "internalType":"uint256[4]"
-          },
-          {
-             "name":"_rewardsReceiver",
-             "type":"address",
-             "internalType":"address"
-          },
-          {
-             "name":"_operatorSignature",
-             "type":"tuple",
-             "internalType":"struct ISignatureUtils.SignatureWithSaltAndExpiry",
-             "components":[
-                {
-                   "name":"signature",
-                   "type":"bytes",
-                   "internalType":"bytes"
-                },
-                {
-                   "name":"salt",
-                   "type":"bytes32",
-                   "internalType":"bytes32"
-                },
-                {
-                   "name":"expiry",
-                   "type":"uint256",
-                   "internalType":"uint256"
-                }
-             ]
-          },
-          {
-             "name":"_blsRegistrationSignature",
-             "type":"tuple",
-             "internalType":"struct BLSAuthLibrary.Signature",
-             "components":[
-                {
-                   "name":"signature",
-                   "type":"uint256[2]",
-                   "internalType":"uint256[2]"
-                }
-             ]
-          }
-       ],
-       "outputs":[
-          
-       ],
-       "stateMutability":"nonpayable"
+              ]
+            },
+            {
+              "name": "authToken",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
        "type":"function",
