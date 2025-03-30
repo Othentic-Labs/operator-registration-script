@@ -20,18 +20,18 @@ const [,, SIGNER_PRIVATE_KEY, WALLET, AVS_GOVERNANCE, RPC] = process.argv;
 
 const jsonRpcProvider = await new ethers.JsonRpcProvider(RPC);
 const signer = new ethers.Wallet(SIGNER_PRIVATE_KEY);
-const isEOA = async (address) => (await jsonRpcProvider.getCode(address)) !== '0x';
+const isEOA = async (address) => (await jsonRpcProvider.getCode(address)) == '0x';
 
   console.log('Signer address:', signer.address);
   console.log('Smart wallet address:', WALLET)
   console.log('Avs address:', AVS_GOVERNANCE)
 
   const payloadHash =  await isEOA(WALLET) 
-    ? ethers.keccak256(ethers.toUtf8Bytes(`${WALLET}${AVS_GOVERNANCE}`))
-    : ethers.keccak256(ethers.concat([
-    ethers.toUtf8Bytes("\x19Ethereum Signed Message:\n"),
-    ethers.toUtf8Bytes(`${AVS_GOVERNANCE.length}`),
-    ethers.toUtf8Bytes(AVS_GOVERNANCE)]));
+    ? ethers.keccak256(ethers.concat([
+        ethers.toUtf8Bytes("\x19Ethereum Signed Message:\n"),
+        ethers.toUtf8Bytes(`${AVS_GOVERNANCE.length}`),
+        ethers.toUtf8Bytes(AVS_GOVERNANCE)]))
+    : ethers.keccak256(ethers.toUtf8Bytes(`${WALLET}${AVS_GOVERNANCE}`))
   const signature = signer.signingKey.sign(ethers.getBytes(payloadHash)).serialized;
   console.log(
     `\n\npayloadHash: \n${payloadHash}`
