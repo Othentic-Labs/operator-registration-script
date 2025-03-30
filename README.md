@@ -93,11 +93,11 @@ outputs:
 
 ### Generate Register as [Allowed] Operator
 
-This script gets the json resulted from the previous script `<JSON_FILE>` and use it together with `<ECDSA_PRIVATE_KEY>`, `<RECEIVER_ADDRESS>`, optional `<AUTH_TOKEN>` and `<RPC>`
+This script gets the json resulted from the previous script `<JSON_FILE>` and use it together with `<ECDSA_PRIVATE_KEY>`, `<RECEIVER_ADDRESS>`, `<RPC>`, and optional `<AUTH_TOKEN>`
 
 
 ```bash
-ts-node scripts/genRegisterAsOperatorTx.ts <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <AUTH_TOKEN> <RPC>
+ts-node scripts/genRegisterAsOperatorTx.ts <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <RPC> <AUTH_TOKEN> 
 ```
 
 for example:
