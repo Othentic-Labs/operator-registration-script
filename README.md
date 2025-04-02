@@ -1,4 +1,4 @@
-# Othentic Operator Registration Scripts
+# Operator Registration Scripts
 
 A comprehensive set of scripts for registering as an EigenLayer AVS operator, designed to work with various wallet types including EOAs, multisigs, and smart accounts.
 
@@ -22,8 +22,8 @@ This toolkit provides a streamlined process for generating the necessary signatu
 
 ```bash
 # Clone the repository
-git clone https://github.com/Othentic-Labs/othentic-eip1271-operator-registration-script.git
-cd othentic-eip1271-operator-registration-script
+git clone https://github.com/Othentic-Labs/operator-registration-script.git
+cd operator-registration-script
 
 # Install dependencies
 npm install
