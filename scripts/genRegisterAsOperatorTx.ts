@@ -12,7 +12,7 @@ const SHOW_SIMULATE_FORGE_SCRIPT = false;
 // ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/othentic-avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd https://holesky.gateway.tenderly.co XXX
 async function main() {
     terminalHeader();
-    if (process.argv.length < 7) {
+    if (process.argv.length < 6) {
         console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <RPC> <AUTH_TOKEN>`);
         terminalFooter();
         process.exit(0);
@@ -62,6 +62,20 @@ async function main() {
     console.log(`\tto: ${tx.to}`);
     console.log(`\tdata: ${tx.data}`);
     console.log(`\n\n`);
+
+    // register operator to eigenLayer 
+    const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
+            signature, 
+            salt, 
+            expiry
+          },
+          AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
+          );
+    console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
+    console.log(`\tto: ${registerToEigenTestnetTx.to}`);
+    console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
+    console.log(`\n\n`);
+
     if (SHOW_SIMULATE_FORGE_SCRIPT) {
         console.log(`Simulate:\n`);
         console.log(`forge script GetCallDataTrace --sig="run(string,address,address,bytes)" ${RPC} ${operator} ${tx.to} ${tx.data} -vvvv`);

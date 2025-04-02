@@ -61,6 +61,41 @@ export const avsGovernanceSmartContractAbi = [
       "stateMutability": "nonpayable"
     },
     {
+      "type": "function",
+      "name": "registerOperatorToEigenLayer",
+      "inputs": [
+        {
+          "name": "_eigenSig",
+          "type": "tuple",
+          "internalType": "struct ISignatureUtilsMixinTypes.SignatureWithSaltAndExpiry",
+          "components": [
+            {
+              "name": "signature",
+              "type": "bytes",
+              "internalType": "bytes"
+            },
+            {
+              "name": "salt",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "expiry",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "_authToken",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
        "type":"function",
        "name":"unregisterAsOperator",
        "inputs":[
