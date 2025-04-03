@@ -57,7 +57,60 @@ ts-node scripts/genAvsRegisterBlsSignature.ts 0x1aa4829bdf0461d6fc1d9cfb0de78eec
 
 Output will be stored in `.othentic/othentic-avs-register-as-operator.json`.
 
-### 2. Generate Registration Transaction Payload
+### 2. Generate Auth token for allow listing (Optional)
+If the AVS is allowlist-enabled, you will also need to generate an `AUTH_TOKEN`
+
+#### a. Generate Signature for Allowlist Service 
+
+Run this script to generate the signature required to generate auth token.
+
+```bash
+ts-node scripts/allowlist/generateSignature.ts <SIGNER_PRIVATE_KEY> <WALLET_ADDRESS> <AVS_GOVERNANCE_ADDRESS>
+```
+
+Parameters:
+- `SIGNER_PRIVATE_KEY`: Operator private key or Private key of the Operator's signer (for smart wallets and multisigs)
+- `WALLET_ADDRESS`: Address of the smart wallet or multisig
+- `AVS_GOVERNANCE_ADDRESS`: Address of the AVS governance contract
+
+Example:
+```bash
+ts-node scripts/allowlist/generateSignature.ts 6212d241a920a6d5d9841af933411d8d6141638c8f7d21a6b32594014ef0006e 0x7F2a575015946D06284E130b00944c5755c351f2 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd
+```
+
+Output will be stored in `.othentic/othentic-allowlist-request-signature.json`.
+
+#### b. Validate Allowlist Signature 
+
+Verify that your allowlist signature is valid before submitting to the allowlist service.
+
+```bash
+ts-node scripts/allowlist/validateSignature.ts <JSON_FILE> <RPC>
+```
+
+Parameters:
+- `JSON_FILE`: Path to the allowlist signature JSON from step 3
+- `RPC`: URL of the Ethereum RPC endpoint
+
+Example:
+```bash
+ts-node scripts/allowlist/validateSignature.ts .othentic/othentic-allowlist-request-signature.json https://holesky.gateway.tenderly.co
+```
+
+
+#### c. Submit Signature to the Allowlist Service
+
+After generating the allowlist signature, submit it to the allowlist service:
+
+```bash
+curl --location 'http://allowlist-signer.othentic.xyz/signer/sign' \
+--header 'Content-Type: application/json' \
+--data '@.othentic/othentic-allowlist-request-signature.json'
+```
+
+The returned token can be used in next step as the `AUTH_TOKEN` parameter.
+
+### 3. Generate Registration Transaction Payload
 
 This step uses the output from `step 1` to generate the transaction data needed for registration.
 
@@ -78,56 +131,6 @@ ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a
 ```
 
 Output will be stored in `.othentic/othentic-evm-transaction-data.json`.
-
-### 3. Generate Signature for Allowlist Service (Optional)
-
-If registration requires allowlisting, use this script to generate the required signature.
-
-```bash
-ts-node scripts/allowlist/generateSignature.ts <SIGNER_PRIVATE_KEY> <WALLET_ADDRESS> <AVS_GOVERNANCE_ADDRESS>
-```
-
-Parameters:
-- `SIGNER_PRIVATE_KEY`: Operator private key or Private key of the Operator's signer (for smart wallets and multisigs)
-- `WALLET_ADDRESS`: Address of the smart wallet or multisig
-- `AVS_GOVERNANCE_ADDRESS`: Address of the AVS governance contract
-
-Example:
-```bash
-ts-node scripts/allowlist/generateSignature.ts 6212d241a920a6d5d9841af933411d8d6141638c8f7d21a6b32594014ef0006e 0x7F2a575015946D06284E130b00944c5755c351f2 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd
-```
-
-Output will be stored in `.othentic/othentic-allowlist-request-signature.json`.
-
-### 4. Validate Allowlist Signature (Optional)
-
-Verify that your allowlist signature is valid before submitting to the allowlist service.
-
-```bash
-ts-node scripts/allowlist/validateSignature.ts <JSON_FILE> <RPC>
-```
-
-Parameters:
-- `JSON_FILE`: Path to the allowlist signature JSON from step 3
-- `RPC`: URL of the Ethereum RPC endpoint
-
-Example:
-```bash
-ts-node scripts/allowlist/validateSignature.ts .othentic/othentic-allowlist-request-signature.json https://holesky.gateway.tenderly.co
-```
-
-
-### 5. Allowlist Service Integration
-
-After generating the allowlist signature, submit it to the allowlist service:
-
-```bash
-curl --location 'http://allowlist-signer.othentic.xyz/signer/sign' \
---header 'Content-Type: application/json' \
---data '@.othentic/othentic-allowlist-request-signature.json'
-```
-
-The returned token can be used in `step 2` as the `AUTH_TOKEN` parameter.
 
 
 ## Working with Different Wallet Types
