@@ -12,7 +12,7 @@ const SHOW_SIMULATE_FORGE_SCRIPT = false;
 // ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a5c58c3f706527c40d131897bc5e4f .othentic/othentic-avs-register-as-operator.json 0x02c13D68F7194F9741DBfDdC65e6a58979A9dfcd https://holesky.gateway.tenderly.co XXX
 async function main() {
     terminalHeader();
-    if (process.argv.length < 7) {
+    if (process.argv.length < 6) {
         console.log(`ts-node ${__filename.substring(process.cwd().length+1)} <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <RPC> <AUTH_TOKEN>`);
         terminalFooter();
         process.exit(0);
@@ -27,6 +27,7 @@ async function main() {
     const registerAsOperatorData = JSON.parse(fs.readFileSync(JSON_FILE, 'utf8'));
     const { chainId: chainIdStr, operator, avs, blsKey, blsRegistrationSignature } = registerAsOperatorData;
     const chainId = BigInt(chainIdStr);
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log('Generating register as allowed operator transaction\n\n\n');
     console.log(`operator: ${operator}`);
     console.log(`AVS: ${avs}`);
@@ -39,7 +40,7 @@ async function main() {
     }
     console.log(`AVS Directory: ${avsDirectory}`);
     const { signature, salt, expiry } = await generateOperatorSignature(wallet, operator, avs);
-    console.log(`\n\n`);
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log(`eigenDigestSignature:\n`);
     console.log(`\tsignature: ${signature}`);
     console.log(`\tsalt: ${salt}`);
@@ -47,21 +48,63 @@ async function main() {
     console.log(`\n\n`);
 
     const avsGovernance = new ethers.Contract(
-        avs,
-        avsGovernanceSmartContractAbi,
-        wallet, 
+      avs,
+      avsGovernanceSmartContractAbi,
+      wallet, 
+      );
+
+    // register operator to eigenLayer 
+    let simulationFailed = false;
+    try {
+      await avsGovernance.registerOperatorToEigenLayer.staticCall({
+          signature, 
+          salt, 
+          expiry
+        },
+        AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
         );
-        const tx = await avsGovernance.registerAsOperator.populateTransaction({
-            blsKey, 
-            rewardsReceiver: RECEIVER_ADDRESS, 
-            blsRegistrationSignature: {signature: blsRegistrationSignature}, 
-            authToken: AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash,
-          }
-          );
+    }
+    catch (registerOperatorToEigenLayerError) {
+      
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
+    if (registerOperatorToEigenLayerError.data == "0x354a5176") {
+      console.log(`registerOperatorToEigenLayer simulation: OperatorAlreadyRegisteredToAVS()`);
+      } else {
+        console.log(`registerOperatorToEigenLayer simulation failed: ${registerOperatorToEigenLayerError}`);
+        console.log(`\n\n`);
+      }
+      simulationFailed = true;
+    }
+
+    if (simulationFailed == false) {
+      const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
+                signature, 
+                salt, 
+                expiry
+              },
+              AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
+              );
+        console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
+        console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
+        console.log(`\tto: ${registerToEigenTestnetTx.to}`);
+        console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
+        console.log(`\n\n`);
+    }
+
+
+    const tx = await avsGovernance.registerAsOperator.populateTransaction({
+        blsKey, 
+        rewardsReceiver: RECEIVER_ADDRESS, 
+        blsRegistrationSignature: {signature: blsRegistrationSignature}, 
+        authToken: AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash,
+    });
+
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log(`Register on AVS tx to be sent:\n`);
     console.log(`\tto: ${tx.to}`);
     console.log(`\tdata: ${tx.data}`);
     console.log(`\n\n`);
+
     if (SHOW_SIMULATE_FORGE_SCRIPT) {
         console.log(`Simulate:\n`);
         console.log(`forge script GetCallDataTrace --sig="run(string,address,address,bytes)" ${RPC} ${operator} ${tx.to} ${tx.data} -vvvv`);
