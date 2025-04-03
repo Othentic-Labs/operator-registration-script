@@ -27,6 +27,7 @@ async function main() {
     const registerAsOperatorData = JSON.parse(fs.readFileSync(JSON_FILE, 'utf8'));
     const { chainId: chainIdStr, operator, avs, blsKey, blsRegistrationSignature } = registerAsOperatorData;
     const chainId = BigInt(chainIdStr);
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log('Generating register as allowed operator transaction\n\n\n');
     console.log(`operator: ${operator}`);
     console.log(`AVS: ${avs}`);
@@ -39,7 +40,7 @@ async function main() {
     }
     console.log(`AVS Directory: ${avsDirectory}`);
     const { signature, salt, expiry } = await generateOperatorSignature(wallet, operator, avs);
-    console.log(`\n\n`);
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log(`eigenDigestSignature:\n`);
     console.log(`\tsignature: ${signature}`);
     console.log(`\tsalt: ${salt}`);
@@ -47,56 +48,62 @@ async function main() {
     console.log(`\n\n`);
 
     const avsGovernance = new ethers.Contract(
-        avs,
-        avsGovernanceSmartContractAbi,
-        wallet, 
+      avs,
+      avsGovernanceSmartContractAbi,
+      wallet, 
+      );
+
+    // register operator to eigenLayer 
+    let simulationFailed = false;
+    try {
+      await avsGovernance.registerOperatorToEigenLayer.staticCall({
+          signature, 
+          salt, 
+          expiry
+        },
+        AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
         );
-        const tx = await avsGovernance.registerAsOperator.populateTransaction({
-            blsKey, 
-            rewardsReceiver: RECEIVER_ADDRESS, 
-            blsRegistrationSignature: {signature: blsRegistrationSignature}, 
-            authToken: AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash,
-          }
-          );
+    }
+    catch (registerOperatorToEigenLayerError) {
+      
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
+    if (registerOperatorToEigenLayerError.data == "0x354a5176") {
+      console.log(`registerOperatorToEigenLayer simulation: OperatorAlreadyRegisteredToAVS()`);
+      } else {
+        console.log(`registerOperatorToEigenLayer simulation failed: ${registerOperatorToEigenLayerError}`);
+        console.log(`\n\n`);
+      }
+      simulationFailed = true;
+    }
+
+    if (simulationFailed == false) {
+      const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
+                signature, 
+                salt, 
+                expiry
+              },
+              AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
+              );
+        console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
+        console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
+        console.log(`\tto: ${registerToEigenTestnetTx.to}`);
+        console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
+        console.log(`\n\n`);
+    }
+
+
+    const tx = await avsGovernance.registerAsOperator.populateTransaction({
+        blsKey, 
+        rewardsReceiver: RECEIVER_ADDRESS, 
+        blsRegistrationSignature: {signature: blsRegistrationSignature}, 
+        authToken: AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash,
+    });
+
+    console.log(`\n\n═════════════════════════════════════════════════════════════════════════════\n`);
     console.log(`Register on AVS tx to be sent:\n`);
     console.log(`\tto: ${tx.to}`);
     console.log(`\tdata: ${tx.data}`);
     console.log(`\n\n`);
-
-    // register operator to eigenLayer 
-      let simulationFailed = false;
-      try {
-        await avsGovernance.registerOperatorToEigenLayer.staticCall({
-            signature, 
-            salt, 
-            expiry
-          },
-          AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
-          );
-      }
-      catch (registerOperatorToEigenLayerError) {
-        if (registerOperatorToEigenLayerError.data == "0x354a5176") {
-        console.log(`registerOperatorToEigenLayer simulation: OperatorAlreadyRegisteredToAVS()`);
-        } else {
-          console.log(`registerOperatorToEigenLayer simulation failed: ${registerOperatorToEigenLayerError}`);
-          console.log(`\n\n`);
-        }
-        simulationFailed = true;
-      }
-
-      if (simulationFailed == false) {
-        const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
-                  signature, 
-                  salt, 
-                  expiry
-                },
-                AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
-                );
-          console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
-          console.log(`\tto: ${registerToEigenTestnetTx.to}`);
-          console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
-          console.log(`\n\n`);
-      }
 
     if (SHOW_SIMULATE_FORGE_SCRIPT) {
         console.log(`Simulate:\n`);
