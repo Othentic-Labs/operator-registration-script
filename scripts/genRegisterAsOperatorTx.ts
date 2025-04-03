@@ -64,17 +64,39 @@ async function main() {
     console.log(`\n\n`);
 
     // register operator to eigenLayer 
-    const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
+      let simulationFailed = false;
+      try {
+        await avsGovernance.registerOperatorToEigenLayer.staticCall({
             signature, 
             salt, 
             expiry
           },
           AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
           );
-    console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
-    console.log(`\tto: ${registerToEigenTestnetTx.to}`);
-    console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
-    console.log(`\n\n`);
+      }
+      catch (registerOperatorToEigenLayerError) {
+        if (registerOperatorToEigenLayerError.data == "0x354a5176") {
+        console.log(`registerOperatorToEigenLayer simulation: OperatorAlreadyRegisteredToAVS()`);
+        } else {
+          console.log(`registerOperatorToEigenLayer simulation failed: ${registerOperatorToEigenLayerError}`);
+          console.log(`\n\n`);
+        }
+        simulationFailed = true;
+      }
+
+      if (simulationFailed == false) {
+        const registerToEigenTestnetTx = await avsGovernance.registerOperatorToEigenLayer.populateTransaction({
+                  signature, 
+                  salt, 
+                  expiry
+                },
+                AUTH_TOKEN ? AUTH_TOKEN : ethers.ZeroHash
+                );
+          console.log(`Register on Operator to eigen tx to be sent (operator need to register to Eigen separately)\nhttps://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/DelegationManager.sol#L95:\n`);
+          console.log(`\tto: ${registerToEigenTestnetTx.to}`);
+          console.log(`\tdata: ${registerToEigenTestnetTx.data}`);
+          console.log(`\n\n`);
+      }
 
     if (SHOW_SIMULATE_FORGE_SCRIPT) {
         console.log(`Simulate:\n`);
