@@ -65,11 +65,11 @@ If the AVS is allowlist-enabled, you will also need to generate an `AUTH_TOKEN`
 Run this script to generate the signature required to generate auth token.
 
 ```bash
-ts-node scripts/allowlist/generateSignature.ts <SIGNER_PRIVATE_KEY> <WALLET_ADDRESS> <AVS_GOVERNANCE_ADDRESS>
+ts-node scripts/allowlist/generateSignature.ts <PRIVATE_KEY> <WALLET_ADDRESS> <AVS_GOVERNANCE_ADDRESS>
 ```
 
 Parameters:
-- `SIGNER_PRIVATE_KEY`: Operator private key or Private key of the Operator's signer (for smart wallets and multisigs)
+- `PRIVATE_KEY`: Operator ecdsa private key or Private key of the Operator's signer (for smart wallets and multisigs)
 - `WALLET_ADDRESS`: Address of the smart wallet or multisig
 - `AVS_GOVERNANCE_ADDRESS`: Address of the AVS governance contract
 
