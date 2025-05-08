@@ -91,7 +91,7 @@ main().catch((error) => {
 > You must use the Safe itself (via WalletConnect or delegate call) to update the fallback handler — not your EOA.
 > 
 - Open Safe contract on Etherscan
-- Use “Write Contract” > setFallBackHandler function
+- Use “Write Contract” > `setFallBackHandler` function
 - Input the deployed `SafeSignatureValidator` address
 - Submit transaction and confirm via Safe
 
@@ -122,7 +122,7 @@ ts-node scripts/genRegisterAsOperatorTx.ts 0x00000000000000000000000000fa9a620b9
 
 1. Open the Safe UI.
 2. Go to the **Transaction Builder (custom data)**.
-3. Paste the raw transaction data from `.othentic/othentic-avs-register-as-operator.json`.
+3. Paste the raw transaction data from `.othentic/othentic-evm-transaction-data.json`.
 4. Submit and confirm using Safe owner signatures.
 
 → Example transaction:  [0xb5b3795c2ed6f81cd994529c6695e40e932fc50fdaf163042a8e4b39616e60a8](https://holesky.etherscan.io/tx/0xb5b3795c2ed6f81cd994529c6695e40e932fc50fdaf163042a8e4b39616e60a8)
