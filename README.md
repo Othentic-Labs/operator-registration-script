@@ -27,6 +27,7 @@ cd operator-registration-script
 
 # Install dependencies
 npm install
+npm install -g ts-node typescript
 ```
 
 ## Usage Guide
