@@ -148,10 +148,15 @@ For standard Externally Owned Accounts, simply use your EOA address as the `WALL
 
 ### Multisignature Wallets (e.g., Safe)
 
-1. Generate the BLS signature 
+1. Generate the BLS signature using script
 2. Generate the registration transaction data
 3. Use the multisig interface to create a new transaction with the data from `.othentic/othentic-evm-transaction-data.json`
 4. Have the required signers approve the transaction
+
+### Ledger
+1. Generate the BLS signature using script
+2. Generate the authToken if needed.
+3. Connect your ledger to etherscan via Metamask and execute `registerAsOperator` function in the AVS governance contract.
 
 ### Programmatic Usage
 
