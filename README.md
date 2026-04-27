@@ -111,6 +111,21 @@ curl --location 'http://allowlist-signer.othentic.xyz/signer/sign' \
 
 The returned token can be used in next step as the `AUTH_TOKEN` parameter.
 
+#### c-alt. Generate the Auth Token Locally (when the hosted service is unavailable)
+
+If `allowlist-signer.othentic.xyz` is offline and you hold the allowlist signer's private key, you can produce the same `AUTH_TOKEN` locally — this replicates the logic of [`Othentic-Labs/Allowlister-AVS`](https://github.com/Othentic-Labs/Allowlister-AVS) `tokenGenerator.service.js`:
+
+```bash
+ts-node scripts/allowlist/genAuthToken.ts <SIGNER_PRIVATE_KEY> <WALLET_ADDRESS> <AVS_GOVERNANCE_ADDRESS>
+```
+
+Parameters:
+- `SIGNER_PRIVATE_KEY`: Allowlist signer's private key (the address configured as `allowlistSigner` on the AVS Governance contract)
+- `WALLET_ADDRESS`: Operator wallet address (EOA / smart wallet / multisig)
+- `AVS_GOVERNANCE_ADDRESS`: AVS Governance contract address
+
+The printed `authToken` is what you pass as `AUTH_TOKEN` in step 3.
+
 ### 3. Generate Registration Transaction Payload
 
 This step uses the output from `step 1` to generate the transaction data needed for registration.
@@ -132,6 +147,16 @@ ts-node scripts/genRegisterAsOperatorTx.ts 0xbf01285ce61c332e151a33e48d178d9c77a
 ```
 
 Output will be stored in `.othentic/othentic-evm-transaction-data.json`.
+
+### 3-alt. Register Directly via the Contract (EOA flow)
+
+If the operator wallet is an EOA, you can skip generating tx-data and submit `registerOperatorToEigenLayer` + `registerAsOperator` straight to the contract using the auth token from step 2:
+
+```bash
+ts-node scripts/registerOperatorWithSig.ts <ECDSA_PRIVATE_KEY> <JSON_FILE> <RECEIVER_ADDRESS> <RPC> <AUTH_TOKEN>
+```
+
+Parameters are the same as step 3, except `AUTH_TOKEN` is required and the script signs and broadcasts the txs from `ECDSA_PRIVATE_KEY` instead of writing JSON output.
 
 
 ## Working with Different Wallet Types
